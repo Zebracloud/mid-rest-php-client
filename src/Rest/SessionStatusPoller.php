@@ -104,7 +104,7 @@ class SessionStatusPoller
     {
         $this->logger->debug('Polling session status');
         $request = $this->createSessionStatusRequest($sessionId, $longPollSeconds);
-        return $this->connector->pullAuthenticationSessionStatus($request);
+        return $this->connector->pullSessionStatus($request);
     }
 
     private function createSessionStatusRequest(string $sessionId, ?int $longPollSeconds) : SessionStatusRequest

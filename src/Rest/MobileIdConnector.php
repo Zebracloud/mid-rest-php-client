@@ -37,7 +37,7 @@ interface MobileIdConnector
 
     public function initAuthentication(AuthenticationRequest $request) : AuthenticationResponse;
 
-    public function pullAuthenticationSessionStatus(SessionStatusRequest $request) : SessionStatus;
+    public function pullSessionStatus(SessionStatusRequest $request) : SessionStatus;
 
     public function pullCertificate(CertificateRequest $request) : CertificateResponse;
 

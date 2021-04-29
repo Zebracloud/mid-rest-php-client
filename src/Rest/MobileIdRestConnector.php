@@ -37,8 +37,10 @@ use Sk\Mid\Rest\Dao\Request\AbstractRequest;
 use Sk\Mid\Rest\Dao\Request\AuthenticationRequest;
 use Sk\Mid\Rest\Dao\Request\CertificateRequest;
 use Sk\Mid\Rest\Dao\Request\SessionStatusRequest;
+use Sk\Mid\Rest\Dao\Request\SignRequest;
 use Sk\Mid\Rest\Dao\Response\AuthenticationResponse;
 use Sk\Mid\Rest\Dao\Response\CertificateResponse;
+use Sk\Mid\Rest\Dao\Response\SignResponse;
 use Sk\Mid\Rest\Dao\SessionStatus;
 use Sk\Mid\Util\Logger;
 
@@ -109,8 +111,15 @@ class MobileIdRestConnector implements MobileIdConnector
     public function initAuthentication(AuthenticationRequest $request) : AuthenticationResponse
     {
         $this->setRequestRelyingPartyDetailsIfMissing($request);
-        $url = $this->endpointUrl . '/authentication';
-        return $this->postAuthenticationRequest($url, $request);
+        $this->endpointUrl .= '/authentication';
+        return $this->postAuthenticationRequest($this->endpointUrl, $request);
+    }
+
+    public function initSign(SignRequest $request) : SignResponse
+    {
+        $this->setRequestRelyingPartyDetailsIfMissing($request);
+        $this->endpointUrl .= '/signature';
+        return $this->postSignRequest($this->endpointUrl, $request);
     }
 
     private function setRequestRelyingPartyDetailsIfMissing(AbstractRequest $request) : void
@@ -129,9 +138,9 @@ class MobileIdRestConnector implements MobileIdConnector
         }
     }
 
-    public function pullAuthenticationSessionStatus(SessionStatusRequest $request) : SessionStatus
+    public function pullSessionStatus(SessionStatusRequest $request) : SessionStatus
     {
-        $url = $this->endpointUrl. '/authentication/session/' . $request->getSessionId();
+        $url = $this->endpointUrl . '/session/' . $request->getSessionId();
 
         if ($request->getSessionStatusResponseSocketTimeoutMs() != null) {
             $url = $url . '?timeoutMs='.$request->getSessionStatusResponseSocketTimeoutMs();
@@ -173,13 +182,19 @@ class MobileIdRestConnector implements MobileIdConnector
                 $this->logger->error("MID returned error code '" . $result . "'");
                 throw new MidInternalErrorException("MID returned error code '" . $result . "'");
         }
-        
+
     }
 
     private function postAuthenticationRequest(string $uri, AuthenticationRequest $request) : AuthenticationResponse
     {
         $responseJson = $this->postRequest($uri, $request);
         return new AuthenticationResponse($responseJson);
+    }
+
+    private function postSignRequest(string $uri, SignRequest $request) : SignResponse
+    {
+        $responseJson = $this->postRequest($uri, $request);
+        return new SignResponse($responseJson);
     }
 
     private function postRequest(string $url, AbstractRequest $paramsForJson) : array
