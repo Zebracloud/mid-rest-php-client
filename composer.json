@@ -1,5 +1,5 @@
 {
-  "name": "sk-id-solutions/mobile-id-php-client",
+  "name": "Zebracloud/mobile-id-php-client",
   "type": "library",
   "description": "Mobile-ID Relying Party PHP Api client",
   "license": "MIT",
